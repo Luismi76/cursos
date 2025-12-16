@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/uploads/avatars/**").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/api/chat/**").hasAnyRole("ALUMNO", "PROFESOR", "ADMINISTRADOR")
@@ -43,8 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/curso/**").hasAnyRole("ALUMNO", "PROFESOR", "ADMINISTRADOR")
                         .requestMatchers("/api/chat-curso/**").hasAnyRole("ALUMNO", "PROFESOR", "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/wiki/**").hasAnyRole("ALUMNO", "PROFESOR")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
