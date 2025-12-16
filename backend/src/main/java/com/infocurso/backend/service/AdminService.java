@@ -31,5 +31,14 @@ public interface AdminService {
 
     UnidadFormativaDTO obtenerUnidadPorId(UUID id);
 
+    // Gestión de usuarios
+    List<UsuarioDTO> listarUsuarios();
+
+    UsuarioDTO crearUsuario(UsuarioDTO dto, String password);
+
+    UsuarioDTO actualizarUsuario(UUID id, UsuarioDTO dto);
+
+    void eliminarUsuario(UUID id);
+
 }
 

@@ -6,6 +6,7 @@ import com.infocurso.backend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,6 +23,7 @@ public class AdminServiceImpl implements AdminService {
     private final ModuloRepository moduloRepository;
     private final UnidadFormativaRepository unidadRepository;
     private final EventoCursoRepository eventoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public CursoDTO crearCurso(CursoDTO dto) {
@@ -189,5 +191,52 @@ public class AdminServiceImpl implements AdminService {
         );
     }
 
+    // Gestión de usuarios
+
+    @Override
+    public List<UsuarioDTO> listarUsuarios() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioDTO::from)
+                .toList();
+    }
+
+    @Override
+    public UsuarioDTO crearUsuario(UsuarioDTO dto, String password) {
+        if (usuarioRepository.findByEmail(dto.email()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya existe un usuario con ese email");
+        }
+
+        Usuario usuario = Usuario.builder()
+                .nombre(dto.nombre())
+                .email(dto.email())
+                .passwordHash(passwordEncoder.encode(password))
+                .rol(Rol.valueOf(dto.rol()))
+                .build();
+
+        usuario = usuarioRepository.save(usuario);
+        return UsuarioDTO.from(usuario);
+    }
+
+    @Override
+    public UsuarioDTO actualizarUsuario(UUID id, UsuarioDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        usuario.setNombre(dto.nombre());
+        usuario.setEmail(dto.email());
+        usuario.setRol(Rol.valueOf(dto.rol()));
+
+        usuario = usuarioRepository.save(usuario);
+        return UsuarioDTO.from(usuario);
+    }
+
+    @Override
+    public void eliminarUsuario(UUID id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
+        usuarioRepository.deleteById(id);
+    }
 
 }

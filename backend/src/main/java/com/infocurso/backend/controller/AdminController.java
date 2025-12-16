@@ -123,6 +123,29 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    // Gestión de usuarios
+
+    @GetMapping("/usuarios")
+    public List<UsuarioDTO> listarUsuarios() {
+        return adminService.listarUsuarios();
+    }
+
+    @PostMapping("/usuarios")
+    public ResponseEntity<UsuarioDTO> crearUsuario(@RequestBody CrearUsuarioDTO dto) {
+        UsuarioDTO usuarioDto = new UsuarioDTO(null, dto.nombre(), dto.email(), dto.rol(), null);
+        return ResponseEntity.ok(adminService.crearUsuario(usuarioDto, dto.password()));
+    }
+
+    @PutMapping("/usuarios/{id}")
+    public ResponseEntity<UsuarioDTO> actualizarUsuario(@PathVariable UUID id, @RequestBody UsuarioDTO dto) {
+        return ResponseEntity.ok(adminService.actualizarUsuario(id, dto));
+    }
+
+    @DeleteMapping("/usuarios/{id}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable UUID id) {
+        adminService.eliminarUsuario(id);
+        return ResponseEntity.ok().build();
+    }
 
 }
 

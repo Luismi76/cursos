@@ -87,3 +87,24 @@ export async function actualizarDescripcionCurso(cursoId: string, descripcion: s
   const res = await api.put(`/admin/curso/${cursoId}/descripcion`, { descripcion });
   return res.data;
 }
+
+// Gestión de usuarios
+
+export async function getUsuarios(): Promise<Usuario[]> {
+  const res = await api.get('/admin/usuarios');
+  return res.data;
+}
+
+export async function crearUsuario(usuario: { nombre: string; email: string; password: string; rol: string }): Promise<Usuario> {
+  const res = await api.post('/admin/usuarios', usuario);
+  return res.data;
+}
+
+export async function actualizarUsuario(id: string, usuario: { nombre: string; email: string; rol: string }): Promise<Usuario> {
+  const res = await api.put(`/admin/usuarios/${id}`, usuario);
+  return res.data;
+}
+
+export async function eliminarUsuario(id: string): Promise<void> {
+  await api.delete(`/admin/usuarios/${id}`);
+}
