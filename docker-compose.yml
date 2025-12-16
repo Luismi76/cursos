@@ -39,6 +39,11 @@ services:
       retries: 5
       start_period: 120s
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.backend.entrypoints=http"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
 
   # Next.js Frontend
   frontend:
@@ -55,6 +60,11 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOST}`)"
+      - "traefik.http.routers.frontend.entrypoints=http"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
 volumes:
   postgres_data:
