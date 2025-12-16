@@ -27,9 +27,10 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 # Skip lint and type checking during build for faster deployment
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
+ENV CI=false
 
-# Build application (skip lint)
-RUN npm run build || (echo "Build failed, trying without strict checks..." && SKIP_LINT=true npm run build)
+# Build application
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine AS runner
