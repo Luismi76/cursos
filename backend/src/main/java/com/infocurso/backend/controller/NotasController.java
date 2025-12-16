@@ -1,5 +1,6 @@
 package com.infocurso.backend.controller;
 
+import com.infocurso.backend.dto.ResumenAlumnoCursoDTO;
 import com.infocurso.backend.dto.ResumenNotasCursoDTO;
 import com.infocurso.backend.entity.Usuario;
 import com.infocurso.backend.service.NotasService;
@@ -53,5 +54,11 @@ public class NotasController {
 
         double promedio = count > 0 ? suma / count : 0;
         return ResponseEntity.ok(Math.round(promedio * 100.0) / 100.0);
+    }
+
+    @GetMapping("/curso/{cursoId}/alumnos")
+    @PreAuthorize("hasRole('PROFESOR')")
+    public List<ResumenAlumnoCursoDTO> getResumenAlumnosCurso(@PathVariable UUID cursoId) {
+        return notasService.getResumenAlumnosCurso(cursoId);
     }
 }

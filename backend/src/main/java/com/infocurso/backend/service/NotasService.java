@@ -1,5 +1,6 @@
 package com.infocurso.backend.service;
 
+import com.infocurso.backend.dto.ResumenAlumnoCursoDTO;
 import com.infocurso.backend.dto.ResumenNotasCursoDTO;
 import com.infocurso.backend.entity.Curso;
 import com.infocurso.backend.entity.Usuario;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -125,5 +127,55 @@ public class NotasService {
         // Ponderación: 60% exámenes, 40% prácticas
         double notaFinal = (notaExamenes * 0.6) + (notaPracticas * 0.4);
         return Math.round(notaFinal * 100.0) / 100.0;
+    }
+
+    public List<ResumenAlumnoCursoDTO> getResumenAlumnosCurso(UUID cursoId) {
+        Curso curso = cursoRepository.findByIdConRelaciones(cursoId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+
+        List<ResumenAlumnoCursoDTO> resumen = new ArrayList<>();
+        Set<Usuario> alumnos = curso.getAlumnos();
+
+        for (Usuario alumno : alumnos) {
+            UUID alumnoId = alumno.getId();
+
+            // Calcular nota de prácticas
+            Double notaPracticas = entregaPracticaRepository.calcularPromedioPracticasAlumno(alumnoId, cursoId);
+            Long practicasCalificadas = entregaPracticaRepository.contarPracticasCalificadas(alumnoId, cursoId);
+
+            // Calcular nota de exámenes
+            Double notaExamenes = notaExamenRepository.calcularPromedioAlumno(alumnoId, cursoId);
+            Long examenesCalificados = notaExamenRepository.countByAlumnoAndCurso(alumnoId, cursoId);
+
+            // Calcular porcentaje de asistencia
+            long totalClases = asistenciaRepository.countByAlumnoAndCurso(alumnoId, cursoId);
+            long presentes = asistenciaRepository.countByAlumnoAndCursoAndEstado(alumnoId, cursoId,
+                    com.infocurso.backend.entity.EstadoAsistencia.PRESENTE);
+            long retrasos = asistenciaRepository.countByAlumnoAndCursoAndEstado(alumnoId, cursoId,
+                    com.infocurso.backend.entity.EstadoAsistencia.RETRASO);
+            long justificados = asistenciaRepository.countByAlumnoAndCursoAndEstado(alumnoId, cursoId,
+                    com.infocurso.backend.entity.EstadoAsistencia.JUSTIFICADO);
+
+            double porcentajeAsistencia = totalClases > 0
+                    ? ((presentes + retrasos + justificados) * 100.0 / totalClases)
+                    : 0;
+
+            // Calcular nota final
+            Double notaFinal = calcularNotaFinal(notaPracticas, notaExamenes);
+
+            resumen.add(new ResumenAlumnoCursoDTO(
+                    alumnoId,
+                    alumno.getNombre(),
+                    alumno.getEmail(),
+                    notaPracticas != null ? Math.round(notaPracticas * 100.0) / 100.0 : null,
+                    practicasCalificadas != null ? practicasCalificadas.intValue() : 0,
+                    notaExamenes != null ? Math.round(notaExamenes * 100.0) / 100.0 : null,
+                    examenesCalificados != null ? examenesCalificados.intValue() : 0,
+                    Math.round(porcentajeAsistencia * 100.0) / 100.0,
+                    notaFinal
+            ));
+        }
+
+        return resumen;
     }
 }

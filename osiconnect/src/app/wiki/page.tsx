@@ -1,66 +1,96 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/hooks/authStore";
+import { getMisCursos } from "@/services/alumnosService";
+import { getCursosProfesor } from "@/services/profesorService";
+import { Curso } from "@/lib/types";
+import { BookOpen, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-const wikiArticulos = [
-  {
-    id: '1',
-    titulo: 'Comandos básicos de Linux',
-    resumen: 'Aprende los comandos esenciales para operar un sistema Linux desde la terminal.',
-  },
-  {
-    id: '2',
-    titulo: 'Gestión de usuarios en Windows',
-    resumen: 'Cómo crear, modificar y eliminar cuentas de usuario en sistemas Windows.',
-  },
-  {
-    id: '3',
-    titulo: 'Redes TCP/IP: conceptos clave',
-    resumen: 'Una introducción sencilla a los fundamentos de redes TCP/IP y configuración básica.',
-  },
-];
+export default function WikiIndexPage() {
+    const router = useRouter();
+    const usuario = useAuthStore((state) => state.usuario);
+    const [cursos, setCursos] = useState<Curso[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export default function WikiPage() {
-  const [busqueda, setBusqueda] = useState('');
+    useEffect(() => {
+        cargarCursos();
+    }, [usuario]);
 
-  const resultados = wikiArticulos.filter((articulo) =>
-    articulo.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
-    articulo.resumen.toLowerCase().includes(busqueda.toLowerCase())
-  );
+    const cargarCursos = async () => {
+        try {
+            setLoading(true);
+            if (usuario?.rol === "ALUMNO") {
+                const data = await getMisCursos();
+                setCursos(data);
+            } else if (usuario?.rol === "PROFESOR") {
+                const data = await getCursosProfesor();
+                setCursos(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return (
-    <div className="min-h-screen p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Wiki Técnica del Curso</h1>
+    // Si solo hay un curso, redirigir directamente
+    useEffect(() => {
+        if (!loading && cursos.length === 1) {
+            router.replace(`/curso/${cursos[0].id}/wiki`);
+        }
+    }, [loading, cursos, router]);
 
-      <Input
-        type="text"
-        placeholder="Buscar artículo..."
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
-        className="max-w-md"
-      />
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p className="text-muted-foreground">Cargando...</p>
+            </div>
+        );
+    }
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {resultados.map((articulo) => (
-          <Card key={articulo.id} className="bg-card text-card-foreground">
-            <CardContent className="p-4 space-y-2">
-              <h2 className="text-lg font-semibold">{articulo.titulo}</h2>
-              <p className="text-sm text-muted-foreground">{articulo.resumen}</p>
-              <Link href={`/wiki/${articulo.id}`}>
-                <Button variant="outline" size="sm">Ver más</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        ))}
+    return (
+        <div className="p-6">
+            <div className="max-w-4xl mx-auto">
+                <div className="flex items-center gap-3 mb-6">
+                    <BookOpen className="h-8 w-8" />
+                    <h1 className="text-3xl font-bold">Wiki del Curso</h1>
+                </div>
 
-        {resultados.length === 0 && (
-          <p className="text-muted-foreground col-span-full">No se encontraron artículos con ese término.</p>
-        )}
-      </div>
-    </div>
-  );
+                {cursos.length === 0 ? (
+                    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-8 text-center">
+                        <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground">
+                            No estás inscrito en ningún curso.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        <p className="text-muted-foreground">
+                            Selecciona un curso para acceder a su wiki:
+                        </p>
+                        {cursos.map((curso) => (
+                            <Link
+                                key={curso.id}
+                                href={`/curso/${curso.id}/wiki`}
+                                className="block bg-white dark:bg-zinc-900 rounded-lg shadow p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h3 className="font-semibold">{curso.nombre}</h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            {curso.descripcion}
+                                        </p>
+                                    </div>
+                                    <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }

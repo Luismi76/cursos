@@ -11,6 +11,18 @@ export interface ResumenNotasCursoDTO {
     notaFinal: number | null;
 }
 
+export interface ResumenAlumnoCursoDTO {
+    alumnoId: string;
+    alumnoNombre: string;
+    alumnoEmail: string;
+    notaPracticas: number | null;
+    practicasCalificadas: number;
+    notaExamenes: number | null;
+    examenesCalificados: number;
+    porcentajeAsistencia: number;
+    notaFinal: number | null;
+}
+
 // Obtener resumen de notas en todos los cursos del alumno
 export async function getMisNotas(): Promise<ResumenNotasCursoDTO[]> {
     const res = await api.get('/notas/mis-notas');
@@ -26,5 +38,11 @@ export async function getMisNotasCurso(cursoId: string): Promise<ResumenNotasCur
 // Obtener promedio general del alumno
 export async function getPromedioGeneral(): Promise<number> {
     const res = await api.get('/notas/promedio-general');
+    return res.data;
+}
+
+// Obtener resumen de todos los alumnos de un curso (para profesores)
+export async function getResumenAlumnosCurso(cursoId: string): Promise<ResumenAlumnoCursoDTO[]> {
+    const res = await api.get(`/notas/curso/${cursoId}/alumnos`);
     return res.data;
 }
