@@ -5,13 +5,6 @@ import { useAuthStore } from "@/hooks/authStore";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
@@ -23,6 +16,11 @@ import {
     Users,
     ChevronLeft,
     ChevronRight,
+    CheckCircle2,
+    XCircle,
+    AlertCircle,
+    FileCheck2,
+    UserCheck,
 } from "lucide-react";
 import {
     AsistenciaDTO,
@@ -59,6 +57,7 @@ export default function AsistenciaPage() {
     const [asistenciaDelDia, setAsistenciaDelDia] = useState<Map<string, RegistroAsistenciaDTO>>(new Map());
     const [fechasRegistradas, setFechasRegistradas] = useState<string[]>([]);
     const [guardando, setGuardando] = useState(false);
+    const [mostrarObservaciones, setMostrarObservaciones] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         if (esProfesor) {
@@ -101,7 +100,6 @@ export default function AsistenciaPage() {
             setCurso(cursoData);
             setFechasRegistradas(fechas);
 
-            // Inicializar el mapa de asistencia con los alumnos
             if (cursoData.alumnos) {
                 const mapaInicial = new Map<string, RegistroAsistenciaDTO>();
                 cursoData.alumnos.forEach((alumno: AlumnoDTO) => {
@@ -128,8 +126,8 @@ export default function AsistenciaPage() {
             const asistencia = await getAsistenciaPorFecha(cursoId, fechaSeleccionada);
 
             const mapaAsistencia = new Map<string, RegistroAsistenciaDTO>();
+            const observacionesVisibles = new Set<string>();
 
-            // Primero poner todos como pendientes
             curso.alumnos.forEach((alumno: AlumnoDTO) => {
                 const existente = asistencia.find((a) => a.alumnoId === alumno.id);
                 if (existente) {
@@ -139,6 +137,9 @@ export default function AsistenciaPage() {
                         estado: existente.estado,
                         observaciones: existente.observaciones || undefined,
                     });
+                    if (existente.observaciones) {
+                        observacionesVisibles.add(alumno.id);
+                    }
                 } else {
                     mapaAsistencia.set(alumno.id, {
                         alumnoId: alumno.id,
@@ -149,6 +150,7 @@ export default function AsistenciaPage() {
             });
 
             setAsistenciaDelDia(mapaAsistencia);
+            setMostrarObservaciones(observacionesVisibles);
         } catch (error) {
             console.error("Error al cargar asistencia del día:", error);
         }
@@ -176,6 +178,28 @@ export default function AsistenciaPage() {
         });
     };
 
+    const toggleObservaciones = (alumnoId: string) => {
+        setMostrarObservaciones((prev) => {
+            const nuevo = new Set(prev);
+            if (nuevo.has(alumnoId)) {
+                nuevo.delete(alumnoId);
+            } else {
+                nuevo.add(alumnoId);
+            }
+            return nuevo;
+        });
+    };
+
+    const marcarTodos = (estado: EstadoAsistencia) => {
+        setAsistenciaDelDia((prev) => {
+            const nuevo = new Map(prev);
+            nuevo.forEach((registro, alumnoId) => {
+                nuevo.set(alumnoId, { ...registro, estado });
+            });
+            return nuevo;
+        });
+    };
+
     const guardarAsistencia = async () => {
         try {
             setGuardando(true);
@@ -183,7 +207,6 @@ export default function AsistenciaPage() {
             await registrarAsistenciaMultiple(cursoId, registros);
             toast.success("Asistencia guardada correctamente");
 
-            // Actualizar fechas registradas si es nueva
             if (!fechasRegistradas.includes(fechaSeleccionada)) {
                 setFechasRegistradas((prev) => [fechaSeleccionada, ...prev].sort().reverse());
             }
@@ -230,12 +253,26 @@ export default function AsistenciaPage() {
         }
     };
 
+    // Contar estados actuales
+    const contarEstados = () => {
+        const estados = { PRESENTE: 0, AUSENTE: 0, RETRASO: 0, JUSTIFICADO: 0 };
+        asistenciaDelDia.forEach((registro) => {
+            estados[registro.estado]++;
+        });
+        return estados;
+    };
+
+    const estadosActuales = contarEstados();
+
     // Vista para ALUMNO
     if (!esProfesor) {
         return (
             <div className="p-6">
                 <div className="max-w-4xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-6">Mi Asistencia</h1>
+                    <div className="flex items-center gap-3 mb-6">
+                        <Calendar className="h-8 w-8" />
+                        <h1 className="text-3xl font-bold">Mi Asistencia</h1>
+                    </div>
 
                     {loading ? (
                         <div className="text-center py-8 text-muted-foreground">
@@ -246,11 +283,11 @@ export default function AsistenciaPage() {
                             {/* Estadísticas */}
                             {misEstadisticas && (
                                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-                                    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 text-center">
-                                        <div className="text-2xl font-bold text-primary">
+                                    <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg shadow p-4 text-center">
+                                        <div className="text-3xl font-bold text-primary">
                                             {misEstadisticas.porcentajeAsistencia}%
                                         </div>
-                                        <div className="text-xs text-muted-foreground">Asistencia</div>
+                                        <div className="text-xs text-muted-foreground">Asistencia Total</div>
                                     </div>
                                     <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 text-center">
                                         <div className="text-2xl font-bold text-green-500">
@@ -271,7 +308,7 @@ export default function AsistenciaPage() {
                                         <div className="text-xs text-muted-foreground">Retrasos</div>
                                     </div>
                                     <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 text-center">
-                                        <div className="text-2xl font-bold">
+                                        <div className="text-2xl font-bold text-blue-500">
                                             {misEstadisticas.justificados}
                                         </div>
                                         <div className="text-xs text-muted-foreground">Justificados</div>
@@ -308,7 +345,7 @@ export default function AsistenciaPage() {
                                                 </div>
                                                 <div className="flex items-center gap-4">
                                                     {registro.observaciones && (
-                                                        <span className="text-sm text-muted-foreground">
+                                                        <span className="text-sm text-muted-foreground max-w-48 truncate">
                                                             {registro.observaciones}
                                                         </span>
                                                     )}
@@ -342,7 +379,7 @@ export default function AsistenciaPage() {
                 ) : (
                     <>
                         {/* Selector de fecha */}
-                        <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mb-6">
+                        <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mb-4">
                             <div className="flex items-center justify-between">
                                 <Button variant="outline" size="sm" onClick={() => cambiarFecha(-1)}>
                                     <ChevronLeft className="w-4 h-4" />
@@ -355,7 +392,7 @@ export default function AsistenciaPage() {
                                         onChange={(e) => setFechaSeleccionada(e.target.value)}
                                         className="w-auto"
                                     />
-                                    <span className="text-sm text-muted-foreground">
+                                    <span className="text-sm text-muted-foreground hidden sm:inline">
                                         {new Date(fechaSeleccionada).toLocaleDateString("es-ES", {
                                             weekday: "long",
                                             day: "numeric",
@@ -369,105 +406,169 @@ export default function AsistenciaPage() {
                             </div>
                             {fechasRegistradas.includes(fechaSeleccionada) && (
                                 <div className="mt-2 text-center">
-                                    <Badge variant="secondary">Ya hay asistencia registrada para este día</Badge>
+                                    <Badge variant="secondary">Ya hay asistencia registrada</Badge>
                                 </div>
                             )}
                         </div>
 
-                        {/* Tabla de asistencia */}
+                        {/* Acciones rápidas y resumen */}
+                        <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mb-4">
+                            <div className="flex flex-wrap items-center justify-between gap-4">
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="text-sm text-muted-foreground self-center mr-2">Marcar todos:</span>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-green-600 border-green-200 hover:bg-green-50 dark:hover:bg-green-950"
+                                        onClick={() => marcarTodos("PRESENTE")}
+                                    >
+                                        <CheckCircle2 className="w-4 h-4 mr-1" />
+                                        Presente
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950"
+                                        onClick={() => marcarTodos("AUSENTE")}
+                                    >
+                                        <XCircle className="w-4 h-4 mr-1" />
+                                        Ausente
+                                    </Button>
+                                </div>
+                                <div className="flex gap-4 text-sm">
+                                    <span className="flex items-center gap-1">
+                                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                        {estadosActuales.PRESENTE}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                        {estadosActuales.AUSENTE}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                        {estadosActuales.RETRASO}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        {estadosActuales.JUSTIFICADO}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Lista de alumnos con toggle rápido */}
                         <div className="bg-white dark:bg-zinc-900 rounded-lg shadow overflow-hidden">
-                            <table className="w-full">
-                                <thead className="bg-zinc-50 dark:bg-zinc-800">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase">
-                                            Alumno
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase">
-                                            Estado
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500 uppercase">
-                                            Observaciones
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                                    {!curso?.alumnos || curso.alumnos.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
-                                                No hay alumnos matriculados en este curso
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        curso.alumnos.map((alumno: AlumnoDTO) => {
-                                            const registro = asistenciaDelDia.get(alumno.id);
-                                            return (
-                                                <tr key={alumno.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                                    <td className="px-4 py-3">
-                                                        <div className="font-medium">{alumno.nombre}</div>
-                                                        <div className="text-xs text-muted-foreground">
+                            {!curso?.alumnos || curso.alumnos.length === 0 ? (
+                                <div className="p-8 text-center text-muted-foreground">
+                                    No hay alumnos matriculados en este curso
+                                </div>
+                            ) : (
+                                <div className="divide-y">
+                                    {curso.alumnos.map((alumno: AlumnoDTO) => {
+                                        const registro = asistenciaDelDia.get(alumno.id);
+                                        const estadoActual = registro?.estado || "PRESENTE";
+                                        const tieneObservaciones = mostrarObservaciones.has(alumno.id);
+
+                                        return (
+                                            <div key={alumno.id} className="p-4">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex-1 min-w-0 mr-4">
+                                                        <div className="font-medium truncate">{alumno.nombre}</div>
+                                                        <div className="text-xs text-muted-foreground truncate">
                                                             {alumno.email}
                                                         </div>
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <Select
-                                                            value={registro?.estado || "PRESENTE"}
-                                                            onValueChange={(value: EstadoAsistencia) =>
-                                                                actualizarEstadoAlumno(alumno.id, value)
-                                                            }
+                                                    </div>
+
+                                                    {/* Botones de toggle rápido */}
+                                                    <div className="flex items-center gap-1">
+                                                        <button
+                                                            onClick={() => actualizarEstadoAlumno(alumno.id, "PRESENTE")}
+                                                            className={`p-2 rounded-lg transition-all ${
+                                                                estadoActual === "PRESENTE"
+                                                                    ? "bg-green-500 text-white shadow-md"
+                                                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-600"
+                                                            }`}
+                                                            title="Presente"
                                                         >
-                                                            <SelectTrigger className="w-40">
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="PRESENTE">
-                                                                    <span className="flex items-center gap-2">
-                                                                        <Check className="w-3 h-3 text-green-500" />
-                                                                        Presente
-                                                                    </span>
-                                                                </SelectItem>
-                                                                <SelectItem value="AUSENTE">
-                                                                    <span className="flex items-center gap-2">
-                                                                        <X className="w-3 h-3 text-red-500" />
-                                                                        Ausente
-                                                                    </span>
-                                                                </SelectItem>
-                                                                <SelectItem value="RETRASO">
-                                                                    <span className="flex items-center gap-2">
-                                                                        <Clock className="w-3 h-3 text-yellow-500" />
-                                                                        Retraso
-                                                                    </span>
-                                                                </SelectItem>
-                                                                <SelectItem value="JUSTIFICADO">
-                                                                    <span className="flex items-center gap-2">
-                                                                        <FileCheck className="w-3 h-3" />
-                                                                        Justificado
-                                                                    </span>
-                                                                </SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </td>
-                                                    <td className="px-4 py-3">
+                                                            <CheckCircle2 className="w-5 h-5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => actualizarEstadoAlumno(alumno.id, "AUSENTE")}
+                                                            className={`p-2 rounded-lg transition-all ${
+                                                                estadoActual === "AUSENTE"
+                                                                    ? "bg-red-500 text-white shadow-md"
+                                                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600"
+                                                            }`}
+                                                            title="Ausente"
+                                                        >
+                                                            <XCircle className="w-5 h-5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => actualizarEstadoAlumno(alumno.id, "RETRASO")}
+                                                            className={`p-2 rounded-lg transition-all ${
+                                                                estadoActual === "RETRASO"
+                                                                    ? "bg-yellow-500 text-white shadow-md"
+                                                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:bg-yellow-100 dark:hover:bg-yellow-900 hover:text-yellow-600"
+                                                            }`}
+                                                            title="Retraso"
+                                                        >
+                                                            <AlertCircle className="w-5 h-5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => actualizarEstadoAlumno(alumno.id, "JUSTIFICADO")}
+                                                            className={`p-2 rounded-lg transition-all ${
+                                                                estadoActual === "JUSTIFICADO"
+                                                                    ? "bg-blue-500 text-white shadow-md"
+                                                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600"
+                                                            }`}
+                                                            title="Justificado"
+                                                        >
+                                                            <FileCheck2 className="w-5 h-5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => toggleObservaciones(alumno.id)}
+                                                            className={`p-2 rounded-lg ml-2 transition-all ${
+                                                                tieneObservaciones
+                                                                    ? "bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
+                                                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                                                            }`}
+                                                            title="Añadir nota"
+                                                        >
+                                                            <span className="text-xs font-medium">Nota</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Campo de observaciones expandible */}
+                                                {tieneObservaciones && (
+                                                    <div className="mt-3">
                                                         <Input
                                                             placeholder="Observaciones..."
                                                             value={registro?.observaciones || ""}
                                                             onChange={(e) =>
                                                                 actualizarObservaciones(alumno.id, e.target.value)
                                                             }
-                                                            className="max-w-xs"
+                                                            className="text-sm"
                                                         />
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
 
-                        {/* Botón guardar */}
+                        {/* Botón guardar fijo */}
                         {curso?.alumnos && curso.alumnos.length > 0 && (
-                            <div className="mt-6 flex justify-end">
-                                <Button onClick={guardarAsistencia} disabled={guardando}>
+                            <div className="sticky bottom-6 mt-6 flex justify-center">
+                                <Button
+                                    onClick={guardarAsistencia}
+                                    disabled={guardando}
+                                    size="lg"
+                                    className="shadow-lg"
+                                >
+                                    <UserCheck className="w-5 h-5 mr-2" />
                                     {guardando ? "Guardando..." : "Guardar Asistencia"}
                                 </Button>
                             </div>
@@ -478,7 +579,7 @@ export default function AsistenciaPage() {
                             <div className="mt-6 bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
                                 <h3 className="font-semibold mb-3">Días con asistencia registrada</h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {fechasRegistradas.slice(0, 10).map((fecha) => (
+                                    {fechasRegistradas.slice(0, 14).map((fecha) => (
                                         <Button
                                             key={fecha}
                                             variant={fecha === fechaSeleccionada ? "default" : "outline"}

@@ -8,5 +8,7 @@ import java.util.UUID;
 
 public interface PracticaRepository extends JpaRepository<Practica, UUID> {
     List<Practica> findByCursoId(UUID cursoId);
+
+    long countByCursoId(UUID cursoId);
 }
 

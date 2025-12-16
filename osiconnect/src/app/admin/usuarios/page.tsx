@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,9 +28,12 @@ import {
     eliminarUsuario,
 } from "@/services/adminService";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search, Users } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Users, GraduationCap, UserCog, Shield, X, ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 
 type Rol = "ALUMNO" | "PROFESOR" | "ADMINISTRADOR";
+type FiltroRol = Rol | "TODOS";
+type SortField = "nombre" | "email" | "rol";
+type SortDirection = "asc" | "desc";
 
 interface FormData {
     nombre: string;
@@ -50,6 +53,9 @@ export default function UsuariosPage() {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [filtroRol, setFiltroRol] = useState<FiltroRol>("TODOS");
+    const [sortField, setSortField] = useState<SortField>("nombre");
+    const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
     // Modal states
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -76,11 +82,64 @@ export default function UsuariosPage() {
         }
     };
 
-    const filteredUsuarios = usuarios.filter(
-        (u) =>
-            u.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            u.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filtrado y ordenación con useMemo para mejor rendimiento
+    const filteredUsuarios = useMemo(() => {
+        let result = usuarios.filter(
+            (u) =>
+                (u.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    u.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                (filtroRol === "TODOS" || u.rol === filtroRol)
+        );
+
+        // Ordenar
+        result.sort((a, b) => {
+            let comparison = 0;
+            if (sortField === "nombre") {
+                comparison = a.nombre.localeCompare(b.nombre);
+            } else if (sortField === "email") {
+                comparison = a.email.localeCompare(b.email);
+            } else if (sortField === "rol") {
+                const rolOrder = { ADMINISTRADOR: 0, PROFESOR: 1, ALUMNO: 2 };
+                comparison = rolOrder[a.rol] - rolOrder[b.rol];
+            }
+            return sortDirection === "asc" ? comparison : -comparison;
+        });
+
+        return result;
+    }, [usuarios, searchTerm, filtroRol, sortField, sortDirection]);
+
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+        } else {
+            setSortField(field);
+            setSortDirection("asc");
+        }
+    };
+
+    const clearFilters = () => {
+        setSearchTerm("");
+        setFiltroRol("TODOS");
+        setSortField("nombre");
+        setSortDirection("asc");
+    };
+
+    const hasActiveFilters = searchTerm || filtroRol !== "TODOS";
+
+    // Contadores por rol
+    const contadores = useMemo(() => ({
+        total: usuarios.length,
+        alumnos: usuarios.filter(u => u.rol === "ALUMNO").length,
+        profesores: usuarios.filter(u => u.rol === "PROFESOR").length,
+        administradores: usuarios.filter(u => u.rol === "ADMINISTRADOR").length,
+    }), [usuarios]);
+
+    const SortIcon = ({ field }: { field: SortField }) => {
+        if (sortField !== field) return <ArrowUpDown className="w-4 h-4 ml-1 opacity-30" />;
+        return sortDirection === "asc"
+            ? <ChevronUp className="w-4 h-4 ml-1" />
+            : <ChevronDown className="w-4 h-4 ml-1" />;
+    };
 
     const handleCreate = async () => {
         if (!formData.nombre || !formData.email || !formData.password) {
@@ -203,9 +262,69 @@ export default function UsuariosPage() {
                     </Button>
                 </div>
 
-                {/* Search */}
-                <div className="mb-6">
-                    <div className="relative max-w-md">
+                {/* Filtros por rol */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    <button
+                        onClick={() => setFiltroRol("TODOS")}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all ${
+                            filtroRol === "TODOS"
+                                ? "border-primary bg-primary/5 shadow-sm"
+                                : "border-zinc-200 dark:border-zinc-700 hover:border-primary/50"
+                        }`}
+                    >
+                        <Users className="w-5 h-5 text-zinc-500" />
+                        <div className="text-left">
+                            <div className="text-2xl font-bold">{contadores.total}</div>
+                            <div className="text-xs text-muted-foreground">Todos</div>
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setFiltroRol("ALUMNO")}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all ${
+                            filtroRol === "ALUMNO"
+                                ? "border-blue-500 bg-blue-50 dark:bg-blue-950 shadow-sm"
+                                : "border-zinc-200 dark:border-zinc-700 hover:border-blue-500/50"
+                        }`}
+                    >
+                        <GraduationCap className="w-5 h-5 text-blue-500" />
+                        <div className="text-left">
+                            <div className="text-2xl font-bold">{contadores.alumnos}</div>
+                            <div className="text-xs text-muted-foreground">Alumnos</div>
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setFiltroRol("PROFESOR")}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all ${
+                            filtroRol === "PROFESOR"
+                                ? "border-green-500 bg-green-50 dark:bg-green-950 shadow-sm"
+                                : "border-zinc-200 dark:border-zinc-700 hover:border-green-500/50"
+                        }`}
+                    >
+                        <UserCog className="w-5 h-5 text-green-500" />
+                        <div className="text-left">
+                            <div className="text-2xl font-bold">{contadores.profesores}</div>
+                            <div className="text-xs text-muted-foreground">Profesores</div>
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setFiltroRol("ADMINISTRADOR")}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all ${
+                            filtroRol === "ADMINISTRADOR"
+                                ? "border-red-500 bg-red-50 dark:bg-red-950 shadow-sm"
+                                : "border-zinc-200 dark:border-zinc-700 hover:border-red-500/50"
+                        }`}
+                    >
+                        <Shield className="w-5 h-5 text-red-500" />
+                        <div className="text-left">
+                            <div className="text-2xl font-bold">{contadores.administradores}</div>
+                            <div className="text-xs text-muted-foreground">Admins</div>
+                        </div>
+                    </button>
+                </div>
+
+                {/* Búsqueda y limpiar filtros */}
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                    <div className="relative flex-1 max-w-md">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Buscar por nombre o email..."
@@ -213,6 +332,15 @@ export default function UsuariosPage() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10"
                         />
+                    </div>
+                    {hasActiveFilters && (
+                        <Button variant="outline" onClick={clearFilters} className="shrink-0">
+                            <X className="w-4 h-4 mr-2" />
+                            Limpiar filtros
+                        </Button>
+                    )}
+                    <div className="text-sm text-muted-foreground self-center ml-auto">
+                        {filteredUsuarios.length} de {usuarios.length} usuarios
                     </div>
                 </div>
 
@@ -222,13 +350,31 @@ export default function UsuariosPage() {
                         <thead className="bg-zinc-50 dark:bg-zinc-800">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                                    Nombre
+                                    <button
+                                        onClick={() => handleSort("nombre")}
+                                        className="flex items-center hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                                    >
+                                        Nombre
+                                        <SortIcon field="nombre" />
+                                    </button>
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                                    Email
+                                    <button
+                                        onClick={() => handleSort("email")}
+                                        className="flex items-center hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                                    >
+                                        Email
+                                        <SortIcon field="email" />
+                                    </button>
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                                    Rol
+                                    <button
+                                        onClick={() => handleSort("rol")}
+                                        className="flex items-center hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                                    >
+                                        Rol
+                                        <SortIcon field="rol" />
+                                    </button>
                                 </th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
                                     Acciones
@@ -285,25 +431,6 @@ export default function UsuariosPage() {
                     </table>
                 </div>
 
-                {/* Stats */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
-                        <div className="text-sm text-muted-foreground">Total Usuarios</div>
-                        <div className="text-2xl font-bold">{usuarios.length}</div>
-                    </div>
-                    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
-                        <div className="text-sm text-muted-foreground">Profesores</div>
-                        <div className="text-2xl font-bold">
-                            {usuarios.filter((u) => u.rol === "PROFESOR").length}
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4">
-                        <div className="text-sm text-muted-foreground">Alumnos</div>
-                        <div className="text-2xl font-bold">
-                            {usuarios.filter((u) => u.rol === "ALUMNO").length}
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {/* Create Modal */}

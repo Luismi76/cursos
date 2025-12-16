@@ -76,3 +76,30 @@ export async function getHistorialCursoAlumno(cursoId: string): Promise<Entregas
   const res = await api.get(`/alumno/curso/${cursoId}/historial`)
   return res.data
 }
+
+// Estadísticas del dashboard del alumno
+export interface ResumenCursoAlumnoDTO {
+  cursoId: string
+  cursoNombre: string
+  notaActual: number | null
+  practicasEntregadas: number
+  practicasPendientes: number
+  porcentajeAsistencia: number
+  examenesRealizados: number
+  examenesPendientes: number
+}
+
+export interface EstadisticasAlumnoDTO {
+  totalCursos: number
+  totalPracticasEntregadas: number
+  totalPracticasPendientes: number
+  promedioGeneral: number | null
+  porcentajeAsistenciaGlobal: number
+  totalExamenesPendientes: number
+  cursos: ResumenCursoAlumnoDTO[]
+}
+
+export async function getEstadisticasAlumno(): Promise<EstadisticasAlumnoDTO> {
+  const res = await api.get('/alumno/estadisticas')
+  return res.data
+}

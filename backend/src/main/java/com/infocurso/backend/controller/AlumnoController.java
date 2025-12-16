@@ -7,6 +7,7 @@ import com.infocurso.backend.repository.CursoRepository;
 import com.infocurso.backend.service.AlumnoCursoService;
 import com.infocurso.backend.service.CursoService;
 import com.infocurso.backend.service.EntregaPracticaService;
+import com.infocurso.backend.service.EstadisticasAlumnoService;
 import com.infocurso.backend.service.NotificacionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class AlumnoController {
     private final CursoRepository cursoRepository;
     private final NotificacionService notificacionService;
     private final EntregaPracticaService entregaPracticaService;
+    private final EstadisticasAlumnoService estadisticasAlumnoService;
 
     @GetMapping("/cursos")
     public List<CursoDTO> getCursosDelAlumno(@AuthenticationPrincipal Usuario alumno) {
@@ -100,6 +102,11 @@ public class AlumnoController {
                 .stream()
                 .map(EntregaPracticaDTO::from)
                 .toList();
+    }
+
+    @GetMapping("/estadisticas")
+    public EstadisticasAlumnoDTO getEstadisticas(@AuthenticationPrincipal Usuario alumno) {
+        return estadisticasAlumnoService.getEstadisticasAlumno(alumno.getId());
     }
 }
 
