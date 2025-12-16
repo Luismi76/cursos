@@ -34,6 +34,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
 ENV CI=false
 
+# Increase Node memory for build
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # Build application
 RUN npm run build
 

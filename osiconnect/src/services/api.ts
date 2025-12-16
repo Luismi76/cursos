@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-if (!API_URL) {
-  throw new Error('Falta definir NEXT_PUBLIC_API_URL en el entorno');
-}
+// Usar variable de entorno o placeholder durante build
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Instancia principal de axios
 export const api = axios.create({
