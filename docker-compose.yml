@@ -41,9 +41,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${BACKEND_HOST}`)"
-      - "traefik.http.routers.backend.entrypoints=http"
-      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+      - "traefik.http.routers.infocurso-backend.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.infocurso-backend.entrypoints=http"
+      - "traefik.http.services.infocurso-backend.loadbalancer.server.port=8080"
 
   # Next.js Frontend
   frontend:
@@ -62,9 +62,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOST}`)"
-      - "traefik.http.routers.frontend.entrypoints=http"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.infocurso-frontend.rule=Host(`${FRONTEND_HOST}`)"
+      - "traefik.http.routers.infocurso-frontend.entrypoints=http"
+      - "traefik.http.services.infocurso-frontend.loadbalancer.server.port=3000"
 
 volumes:
   postgres_data:
