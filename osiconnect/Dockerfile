@@ -1,16 +1,21 @@
 # Multi-stage build for Next.js
 FROM node:20-alpine AS deps
 
+# Install libc6-compat for native dependencies
+RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Install dependencies (use install instead of ci for flexibility)
-RUN npm install --legacy-peer-deps
+# Install dependencies
+RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
 # Build stage
 FROM node:20-alpine AS builder
+
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 

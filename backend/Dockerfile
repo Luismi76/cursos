@@ -1,5 +1,5 @@
 # Multi-stage build for Spring Boot
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
@@ -14,10 +14,10 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
-# Install wget for health checks
-RUN apk add --no-cache wget
+# Install wget and curl for health checks
+RUN apk add --no-cache wget curl
 
 WORKDIR /app
 
@@ -27,9 +27,5 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
-
-# Run application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run application with optimized JVM settings for containers
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
