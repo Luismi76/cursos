@@ -1,0 +1,135 @@
+.gantt-context-menu {
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0.25rem;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.gantt-context-menu button {
+  all: unset;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gantt-context-menu button:hover {
+  background: #f1f1f1;
+}
+.weekend {
+  background-color: #f3f3f3 !important;
+}
+
+.scale-bold {
+  font-weight: bold;
+}
+/* Módulos (barras grandes, azul oscuro) */
+.modulo-gantt .gantt_task_content {
+  background-color: #2563eb !important; /* Azul oscuro */
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+/* Unidades (barras verdes, más suaves) */
+.unidad-gantt .gantt_task_content {
+  background-color: #10b981 !important; /* Verde */
+  color: white;
+  border-radius: 4px;
+}
+
+/* Eventos (puntos o iconos pequeños, color naranja o similar) */
+.evento-gantt .gantt_task_content {
+  background-color: #f59e0b !important; /* Naranja */
+  color: black;
+  border-radius: 50%;
+  text-align: center;
+  width: 20px !important;
+  height: 20px !important;
+  margin: auto;
+  padding: 0;
+  line-height: 20px;
+  font-size: 12px;
+}
+.gantt_milestone {
+  background: none !important;
+}
+.evento-gantt .gantt_task_drag {
+  display: none !important;
+}
+/* Asegura que el contenedor del Gantt tenga altura mínima */
+.gantt-container {
+  min-height: 500px;
+  overflow-x: auto;
+}
+
+/* Ajustes visuales del menú contextual */
+.gantt-context-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gantt-context-menu button {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+
+.gantt-context-menu button:hover {
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+/* Colores específicos por tipo de tarea */
+.modulo-gantt .gantt_task_content {
+  background-color: #3b82f6 !important; /* azul */
+}
+
+.unidad-gantt .gantt_task_content {
+  background-color: #10b981 !important; /* verde */
+}
+
+.evento-gantt .gantt_task_content {
+  background-color: #facc15 !important; /* amarillo */
+  border: 2px dashed #ca8a04 !important;
+}
+
+.gantt-context-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.gantt-context-menu button {
+  display: block;
+  width: 100%;
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gantt-context-menu button:hover {
+  background-color: #f0f0f0;
+}
