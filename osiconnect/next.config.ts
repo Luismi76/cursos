@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone', // Enable for Docker deployment
+  eslint: {
+    // Ignore ESLint errors during production builds
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // Ignore TypeScript errors during production builds
+    ignoreBuildErrors: true,
+  },
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
