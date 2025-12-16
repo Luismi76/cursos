@@ -42,7 +42,7 @@ export function AppSidebar({ className }: SidebarProps) {
         },
         {
             name: "Mis Cursos",
-            href: rol === 'PROFESOR' ? '/profesor/curso' : '/alumno/mis-cursos',
+            href: rol === 'PROFESOR' ? '/profesor' : '/alumno/mis-cursos',
             icon: BookOpen,
             show: rol !== 'ADMINISTRADOR'
         },
