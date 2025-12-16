@@ -16,6 +16,9 @@ RUN mvn clean package -DskipTests
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
 
+# Install wget for health checks
+RUN apk add --no-cache wget
+
 WORKDIR /app
 
 # Copy jar from build stage
@@ -25,7 +28,7 @@ COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
 
 # Run application
