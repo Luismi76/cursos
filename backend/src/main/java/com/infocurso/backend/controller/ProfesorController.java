@@ -7,6 +7,7 @@ import com.infocurso.backend.repository.CursoRepository;
 import com.infocurso.backend.service.AlumnoCursoService;
 import com.infocurso.backend.service.CursoService;
 import com.infocurso.backend.service.EntregaPracticaService;
+import com.infocurso.backend.service.EstadisticasProfesorService;
 import com.infocurso.backend.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class ProfesorController {
     private final AlumnoCursoService alumnoCursoService;
     private final UsuarioService usuarioService;
     private final EntregaPracticaService entregaPracticaService;
+    private final EstadisticasProfesorService estadisticasProfesorService;
+
+    @GetMapping("/estadisticas")
+    public EstadisticasProfesorDTO getEstadisticas(@AuthenticationPrincipal Usuario profesor) {
+        return estadisticasProfesorService.getEstadisticasProfesor(profesor.getId());
+    }
 
     @PostMapping("/curso")
     public CursoDTO crearCurso(@RequestBody CursoDTO dto, @AuthenticationPrincipal Usuario profesor) {

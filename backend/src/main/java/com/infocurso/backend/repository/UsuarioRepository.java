@@ -1,5 +1,6 @@
 package com.infocurso.backend.repository;
 
+import com.infocurso.backend.entity.Rol;
 import com.infocurso.backend.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     @Query("SELECT u FROM Usuario u WHERE u.rol = 'PROFESOR'")
     List<Usuario> findProfesores();
 
+    long countByRol(Rol rol);
 }

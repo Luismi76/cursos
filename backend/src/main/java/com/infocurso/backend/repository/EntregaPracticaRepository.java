@@ -28,4 +28,9 @@ public interface EntregaPracticaRepository extends JpaRepository<EntregaPractica
     @Query("SELECT COUNT(e) FROM EntregaPractica e WHERE e.alumno.id = :alumnoId AND e.practica.curso.id = :cursoId AND e.nota IS NOT NULL")
     Long contarPracticasCalificadas(UUID alumnoId, UUID cursoId);
 
+    @Query("SELECT COUNT(e) FROM EntregaPractica e WHERE e.practica.curso.id = :cursoId AND e.nota IS NULL")
+    Long contarEntregasPendientesCurso(UUID cursoId);
+
+    @Query("SELECT AVG(e.nota) FROM EntregaPractica e WHERE e.practica.curso.id = :cursoId AND e.nota IS NOT NULL")
+    Double calcularPromedioNotasCurso(UUID cursoId);
 }

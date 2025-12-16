@@ -29,4 +29,10 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, UUID> {
 
     @Query("SELECT DISTINCT a.fecha FROM Asistencia a WHERE a.curso.id = :cursoId ORDER BY a.fecha DESC")
     List<LocalDate> findDistinctFechasByCursoId(@Param("cursoId") UUID cursoId);
+
+    @Query("SELECT COUNT(a) FROM Asistencia a WHERE a.curso.id = :cursoId")
+    long countByCurso(@Param("cursoId") UUID cursoId);
+
+    @Query("SELECT COUNT(a) FROM Asistencia a WHERE a.curso.id = :cursoId AND a.estado = :estado")
+    long countByCursoAndEstado(@Param("cursoId") UUID cursoId, @Param("estado") EstadoAsistencia estado);
 }

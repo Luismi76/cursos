@@ -7,6 +7,25 @@ import {
   Usuario
 } from "@/lib/types";
 
+export interface EstadisticasSistemaDTO {
+  totalUsuarios: number;
+  totalAlumnos: number;
+  totalProfesores: number;
+  totalAdministradores: number;
+  totalCursos: number;
+  cursosActivos: number;
+  totalPracticas: number;
+  totalExamenes: number;
+  entregasTotales: number;
+  entregasPendientes: number;
+  asistenciaMedia: number;
+}
+
+export const getEstadisticasSistema = async (): Promise<EstadisticasSistemaDTO> => {
+  const response = await api.get("/admin/estadisticas");
+  return response.data;
+};
+
 export const crearCurso = async (curso: { nombre: string; descripcion: string }) => {
   const response = await api.post<CursoDTO>("/admin/curso", curso);
   return response.data;

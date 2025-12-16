@@ -4,6 +4,7 @@ import com.infocurso.backend.dto.*;
 import com.infocurso.backend.service.AdminService;
 import com.infocurso.backend.service.AlumnoCursoService;
 import com.infocurso.backend.service.CursoService;
+import com.infocurso.backend.service.EstadisticasSistemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +25,13 @@ public class AdminController {
     private CursoService cursoService;
     @Autowired
     private AlumnoCursoService alumnoCursoService;
+    @Autowired
+    private EstadisticasSistemaService estadisticasSistemaService;
+
+    @GetMapping("/estadisticas")
+    public EstadisticasSistemaDTO getEstadisticasSistema() {
+        return estadisticasSistemaService.getEstadisticasSistema();
+    }
 
     @PostMapping("/curso")
     public ResponseEntity<CursoDTO> crearCurso(@RequestBody CursoDTO dto) {

@@ -20,6 +20,7 @@ import { useAuthStore } from "@/hooks/authStore";
 import { AppSidebar } from "./AppSidebar";
 import { NotificacionesGlobales } from "@/components/common/NotificacionesGlobales";
 import UnifiedChat from "@/components/common/UnifiedChat";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 
 export default function ClientLayout({
@@ -126,6 +127,7 @@ export default function ClientLayout({
                 </Link>
               </>
             )}
+            <ThemeToggle />
             <NotificacionesGlobales />
             <UserDropdown user={usuario} />
           </div>

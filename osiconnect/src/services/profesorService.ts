@@ -1,6 +1,30 @@
 import { Curso, Practica, CrearPracticaDTO, CursoDTO } from '@/lib/types'
 import { api } from './api'
 
+export interface ResumenCursoProfesorDTO {
+  cursoId: string;
+  cursoNombre: string;
+  totalAlumnos: number;
+  entregasPendientes: number;
+  examenesProximos: number;
+  asistenciaMedia: number;
+  promedioNotas: number;
+}
+
+export interface EstadisticasProfesorDTO {
+  totalCursos: number;
+  totalAlumnos: number;
+  entregasPendientes: number;
+  examenesProximos: number;
+  asistenciaMedia: number;
+  cursos: ResumenCursoProfesorDTO[];
+}
+
+export const getEstadisticasProfesor = async (): Promise<EstadisticasProfesorDTO> => {
+  const response = await api.get('/profesor/estadisticas')
+  return response.data
+}
+
 export const getCursosProfesor = async (): Promise<Curso[]> => {
   const response = await api.get('/profesor/cursos')
   return response.data
