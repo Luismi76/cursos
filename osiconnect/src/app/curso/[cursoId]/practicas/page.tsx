@@ -50,7 +50,8 @@ export default function PracticasPage() {
     const params = useParams();
     const cursoId = params.cursoId as string;
     const usuario = useAuthStore((state) => state.usuario);
-    const esProfesor = usuario?.rol === "PROFESOR";
+    const esProfesor = usuario?.rol === "PROFESOR" || usuario?.rol === "ADMINISTRADOR";
+    const esAlumno = usuario?.rol === "ALUMNO";
 
     // Estado común
     const [loading, setLoading] = useState(true);
@@ -91,7 +92,7 @@ export default function PracticasPage() {
             if (esProfesor) {
                 const data = await getPracticasCurso(cursoId);
                 setPracticas(data);
-            } else {
+            } else if (esAlumno) {
                 const data = await getHistorialCursoAlumno(cursoId);
                 setHistorial(data);
             }
