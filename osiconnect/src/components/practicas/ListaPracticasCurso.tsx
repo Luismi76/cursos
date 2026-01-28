@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import TarjetaPractica from "./TarjetaPractica";
+import TarjetaPracticaProfesor from "./TarjetaPracticaProfesor";
 import { FileText } from "lucide-react";
 
 interface ListaPracticasCursoProps {
@@ -99,14 +100,19 @@ export default function ListaPracticasCurso({
               <DialogHeader>
                 <DialogTitle>{p.titulo}</DialogTitle>
               </DialogHeader>
-              <TarjetaPractica
-                practica={p}
-                rol={rol}
-                cursoId={cursoId}
-                entrega={entrega}
-                onEditar={() => onEditar?.(p.id)}
-                onEliminar={() => onEliminar?.(p.id)}
-              />
+              {rol === "profesor" ? (
+                <TarjetaPracticaProfesor
+                  practica={p}
+                  onEditar={() => onEditar?.(p.id)}
+                  onEliminar={() => onEliminar?.(p.id)}
+                />
+              ) : (
+                <TarjetaPractica
+                  practica={p}
+                  cursoId={cursoId}
+                  entrega={entrega}
+                />
+              )}
             </DialogContent>
           </Dialog>
         );

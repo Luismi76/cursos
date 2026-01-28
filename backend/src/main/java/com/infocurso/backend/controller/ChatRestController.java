@@ -3,7 +3,7 @@ package com.infocurso.backend.controller;
 import com.infocurso.backend.dto.MensajeCursoDTO;
 import com.infocurso.backend.dto.MensajeCursoVistaDTO;
 import com.infocurso.backend.dto.MensajeDTO;
-import com.infocurso.backend.entity.Mensaje;
+// import com.infocurso.backend.entity.Mensaje;
 import com.infocurso.backend.entity.MensajeCurso;
 import com.infocurso.backend.repository.CursoRepository;
 import com.infocurso.backend.repository.MensajeCursoRepository;
@@ -22,11 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/chat")
 public class ChatRestController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChatRestController.class);
 
     private final MensajeRepository mensajeRepository;
     private final MensajeCursoRepository mensajeCursoRepository;
@@ -54,11 +58,7 @@ public class ChatRestController {
     @MessageMapping("/curso-chat")
     @Transactional
     public void enviarMensajeCurso(@Payload MensajeCursoDTO dto) {
-        System.out.println("🎯 MÉTODO INVOCADO - enviarMensajeCurso");
-        System.out.println("📨 Mensaje recibido en backend: " + dto);
-        System.out.println("  - CursoId: " + dto.getCursoId());
-        System.out.println("  - Autor: " + dto.getAutor());
-        System.out.println("  - Contenido: " + dto.getContenido());
+        logger.debug("🎯 enviarMensajeCurso invocado para CursoId: {}", dto.getCursoId());
 
         try {
             MensajeCurso mensaje = MensajeCurso.builder()
@@ -69,7 +69,7 @@ public class ChatRestController {
                     .build();
 
             mensajeCursoRepository.save(mensaje);
-            System.out.println("✅ Mensaje guardado en BD");
+            logger.debug("✅ Mensaje guardado en BD");
 
             MensajeCursoDTO dtoEnriquecido = MensajeCursoDTO.from(mensaje);
             System.out.println("📤 Broadcasting mensaje a: /topic/curso/" + dto.getCursoId());
@@ -77,10 +77,9 @@ public class ChatRestController {
             messagingTemplate.convertAndSend(
                     "/topic/curso/" + dto.getCursoId(),
                     dtoEnriquecido);
-            System.out.println("✅ Mensaje enviado por WebSocket");
+            logger.debug("✅ Mensaje enviado por WebSocket");
         } catch (Exception e) {
-            System.err.println("❌ Error procesando mensaje: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("❌ Error procesando mensaje: {}", e.getMessage(), e);
         }
     }
 

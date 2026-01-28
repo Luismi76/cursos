@@ -1,7 +1,7 @@
 package com.infocurso.backend.controller;
 
 import com.infocurso.backend.dto.CursoDTO;
-import com.infocurso.backend.entity.Curso;
+// import com.infocurso.backend.entity.Curso;
 import com.infocurso.backend.service.CursoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

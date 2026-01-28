@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+// import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,7 +62,7 @@ public class UsuarioService implements UserDetailsService {
         Thumbnails.of(archivo.getInputStream())
                 .size(300, 300) // Puedes ajustar el tamaño según lo que necesites
                 .outputFormat(extension) // Conserva el formato original (png, jpg…)
-                .outputQuality(0.8f)     // Calidad (1.0 = sin compresión, 0.0 = máxima compresión)
+                .outputQuality(0.8f) // Calidad (1.0 = sin compresión, 0.0 = máxima compresión)
                 .toFile(destino.toFile());
 
         // Guardamos la ruta en el usuario
@@ -72,6 +72,7 @@ public class UsuarioService implements UserDetailsService {
 
         return nombreArchivo;
     }
+
     private String generarNombreUnico(String originalFilename) {
         String extension = "";
 
@@ -84,11 +85,8 @@ public class UsuarioService implements UserDetailsService {
         return nombreUnico + extension;
     }
 
-
     public Usuario getUsuarioById(UUID id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 }
-
-

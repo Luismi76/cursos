@@ -9,9 +9,7 @@ import com.infocurso.backend.repository.CursoRepository;
 import com.infocurso.backend.repository.EntregaPracticaRepository;
 import com.infocurso.backend.repository.PracticaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -20,13 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class EntregaPracticaService {
 
     private final EntregaPracticaRepository entregaRepo;
     private final PracticaRepository practicaRepository;
     private final AlumnoCursoService alumnoCursoService;
     private final NotificacionService notificacionService;
-    private final CursoService cursoService;
+    // private final CursoService cursoService;
     private final CursoRepository cursoRepository;
     private final UsuarioService usuarioService;
 
@@ -37,8 +36,7 @@ public class EntregaPracticaService {
                 EntregaPractica.builder()
                         .alumno(alumno)
                         .practica(practica)
-                        .build()
-        );
+                        .build());
 
         entrega.setArchivoUrl(archivoUrl);
         entrega.setComentario(comentario);
@@ -71,8 +69,7 @@ public class EntregaPracticaService {
         notificacionService.enviar(
                 entrega.getAlumno(),
                 "Has recibido una calificación en la práctica '" + entrega.getPractica().getTitulo() + "'",
-                "CALIFICACION"
-        );
+                "CALIFICACION");
     }
 
     public EntregasAgrupadasDTO getEntregasAgrupadas(UUID practicaId) {
@@ -122,7 +119,6 @@ public class EntregaPracticaService {
         return resultado;
     }
 
-
     public EntregasAgrupadasDTO getHistorialAlumnoPorCurso(UUID cursoId, UUID alumnoId) {
         Curso curso = cursoRepository.findByIdConRelaciones(cursoId)
                 .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
@@ -160,7 +156,5 @@ public class EntregaPracticaService {
     public List<EntregaPractica> getEntregasDeAlumno(UUID alumnoId) {
         return entregaRepo.findByAlumnoId(alumnoId);
     }
-
-
 
 }

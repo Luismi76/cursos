@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, Loader2, User } from "lucide-react";
+import { LogOut, Settings, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/hooks/authStore";
 import AvatarAmpliable from "@/components/common/AvatarAmpliable";

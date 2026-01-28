@@ -17,7 +17,7 @@ import java.util.UUID;
 public class AlumnoCursoService {
 
     private final AlumnoCursoRepository alumnoCursoRepository;
-    private final CursoService cursoService;
+    // private final CursoService cursoService;
     private final UsuarioRepository usuarioRepository;
     private final CursoRepository cursoRepository;
 
@@ -56,8 +56,8 @@ public class AlumnoCursoService {
                 .map(AlumnoCurso::getCurso)
                 .toList();
     }
+
     public boolean estaInscrito(UUID cursoId, UUID alumnoId) {
         return alumnoCursoRepository.existsByCursoIdAndAlumnoId(cursoId, alumnoId);
     }
 }
-

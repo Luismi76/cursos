@@ -22,7 +22,7 @@ export const verMiEntrega = async (
 
 export const listarMisEntregas = async (): Promise<EntregaPractica[]> => {
   const token = localStorage.getItem('token')
-  console.log('TOKEN QUE SE ENVÍA', token)
+  /* token removed from log */
   const res = await api.get('/alumno/mis')
   return res.data
 }

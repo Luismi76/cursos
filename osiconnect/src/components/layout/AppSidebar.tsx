@@ -4,12 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+// import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
     LayoutDashboard,
     BookOpen,
     Settings,
-    Menu,
     GraduationCap,
     Users,
     FileBarChart,
@@ -25,7 +24,7 @@ export function AppSidebar({ className }: SidebarProps) {
     const pathname = usePathname();
     const usuario = useAuthStore((state) => state.usuario);
     const rol = usuario?.rol;
-    const [open, setOpen] = useState(false);
+    // const [open, setOpen] = useState(false);
 
     // Detect if we're in a course context
     const cursoMatch = pathname.match(/\/curso\/([^/]+)/);
@@ -82,7 +81,7 @@ export function AppSidebar({ className }: SidebarProps) {
                 </h2>
                 <div className="space-y-1">
                     {filteredGlobalNav.map((item) => (
-                        <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+                        <Link key={item.name} href={item.href}>
                             <Button
                                 variant={pathname === item.href ? "secondary" : "ghost"}
                                 className={cn(
@@ -108,6 +107,7 @@ export function AppSidebar({ className }: SidebarProps) {
     return (
         <>
             {/* Mobile Trigger */}
+            {/* Mobile Trigger - HIDDEN in favor of BottomNav 
             <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>
                     <Button variant="ghost" className="md:hidden fixed top-3 left-4 z-50">
@@ -122,6 +122,7 @@ export function AppSidebar({ className }: SidebarProps) {
                     )}
                 </SheetContent>
             </Sheet>
+            */}
 
             {/* Desktop Sidebar */}
             <div className={cn("hidden border-r bg-background md:block w-64 fixed h-full", className)}>

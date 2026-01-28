@@ -16,14 +16,4 @@ export const api = axios.create({
 // Las cookies se envían automáticamente
 
 // Función de login que obtiene el token
-export const login = async (email: string, password: string) => {
-  const response = await axios.post(
-    `${API_URL}/auth/login`,
-    { email, password },
-    {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true, // ✅ Recibir cookie del servidor
-    }
-  );
-  return response.data; // Solo devuelve el usuario (sin token)
-};
+// Login logic moved to authService.ts

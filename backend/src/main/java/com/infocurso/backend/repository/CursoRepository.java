@@ -2,6 +2,7 @@ package com.infocurso.backend.repository;
 
 import com.infocurso.backend.entity.Curso;
 import com.infocurso.backend.entity.Usuario;
+import com.infocurso.backend.entity.AlumnoCurso;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public interface CursoRepository extends JpaRepository<Curso, UUID> {
 
     List<Curso> findByProfesorId(UUID profesorId);
+
     List<Curso> findByProfesor(Usuario profesor);
 
     @EntityGraph(attributePaths = {
@@ -27,23 +29,22 @@ public interface CursoRepository extends JpaRepository<Curso, UUID> {
     @Query("SELECT c FROM Curso c WHERE c.id = :id")
     Optional<Curso> findByIdConRelaciones(@Param("id") UUID id);
 
-
-    @EntityGraph(attributePaths = {"profesor", "alumnos", "practicas", "modulos", "modulos.unidades", "eventos"})
+    @EntityGraph(attributePaths = { "profesor", "alumnos", "practicas", "modulos", "modulos.unidades", "eventos" })
     @Query("SELECT c FROM Curso c")
     List<Curso> findAllConRelaciones();
 
     @Query("""
-    SELECT DISTINCT c FROM Curso c
-    LEFT JOIN FETCH c.profesor
-    LEFT JOIN FETCH c.alumnos
-    LEFT JOIN FETCH c.practicas
-    LEFT JOIN FETCH c.modulos m
-    LEFT JOIN FETCH m.unidades
-    LEFT JOIN FETCH c.eventos
-    WHERE c.id = :id
-""")
+                SELECT DISTINCT c FROM Curso c
+                LEFT JOIN FETCH c.profesor
+                LEFT JOIN FETCH c.alumnos
+                LEFT JOIN FETCH c.practicas
+                LEFT JOIN FETCH c.modulos m
+                LEFT JOIN FETCH m.unidades
+                LEFT JOIN FETCH c.eventos
+                WHERE c.id = :id
+            """)
     Optional<Curso> findByIdConTodo(@Param("id") UUID id);
 
-    @Query("SELECT c FROM Curso c JOIN c.alumnos a WHERE a.id = :alumnoId")
+    @Query("SELECT ac.curso FROM AlumnoCurso ac WHERE ac.alumno.id = :alumnoId")
     List<Curso> findCursosByAlumnoId(@Param("alumnoId") UUID alumnoId);
 }

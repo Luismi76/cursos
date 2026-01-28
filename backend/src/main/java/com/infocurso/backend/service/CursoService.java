@@ -11,20 +11,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+// import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class CursoService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CursoService.class);
 
     private final CursoRepository cursoRepository;
     private final PracticaRepository practicaRepository;
     private final AlumnoConsultaService alumnoConsultaService;
     private final ObjectMapper objectMapper;
-    private  final EventoCursoRepository eventoCursoRepository;
+    private final EventoCursoRepository eventoCursoRepository;
 
     public Curso crearCurso(CursoDTO dto, Usuario profesor) {
         Curso curso = new Curso();
@@ -84,6 +89,7 @@ public class CursoService {
 
         return CursoDTO.from(curso, alumnos);
     }
+
     public void eliminarPractica(UUID practicaId) {
         practicaRepository.deleteById(practicaId);
     }
@@ -102,9 +108,10 @@ public class CursoService {
 
         return practicaRepository.save(practica);
     }
+
     // Devuelve un CursoDTO completo con módulos, unidades, prácticas, alumnos, etc.
     public CursoDTO getCursoDTO(UUID id) {
-        System.out.println("🟢 Intentando cargar curso: " + id);
+        logger.debug("🟢 Intentando cargar curso: {}", id);
 
         Curso curso = cursoRepository.findByIdConTodo(id)
                 .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
@@ -118,32 +125,17 @@ public class CursoService {
             CursoDTO dto = CursoDTO.from(curso, alumnos);
 
             // Log detallado del contenido del DTO
-            System.out.println("📦 CursoDTO generado:");
-            System.out.println("  🆔 ID: " + dto.id());
-            System.out.println("  📚 Nombre: " + dto.nombre());
-            System.out.println("  🧑‍🏫 Profesor: " + dto.profesor().nombre());
-            System.out.println("  👥 Alumnos: " + dto.alumnos().size());
-            System.out.println("  📝 Prácticas: " + dto.practicas().size());
-            System.out.println("  📦 Módulos: " + dto.modulos().size());
-
-            dto.modulos().forEach(mod -> {
-                System.out.println("    ➤ Módulo: " + mod.getNombre());
-                System.out.println("       📅 Fechas: " + mod.getFechaInicio() + " → " + mod.getFechaFin());
-                System.out.println("       📑 Unidades: " + (mod.getUnidades() != null ? mod.getUnidades().size() : 0));
-                if (mod.getUnidades() != null) {
-                    mod.getUnidades().forEach(uf -> {
-                        System.out.println("         - " + uf.getNombre() + " (" + uf.getFechaInicio() + " → " + uf.getFechaFin() + ")");
-                    });
-                }
-            });
+            // Log detallado comentado para producción
+            // logger.debug("📦 CursoDTO generado: {}", dto);
 
             return dto;
 
         } catch (Exception e) {
-            System.out.println("❌ Error al construir CursoDTO: " + e.getMessage());
+            logger.error("❌ Error al construir CursoDTO: {}", e.getMessage());
             throw e;
         }
     }
+
     public void crearEventoCurso(Curso curso, EventoCursoDTO dto, Usuario autor) {
         EventoCurso evento = new EventoCurso();
         evento.setCurso(curso);
@@ -156,17 +148,11 @@ public class CursoService {
         eventoCursoRepository.save(evento);
     }
 
-
-
-
-
-
     public List<CursoDTO> getTodosLosCursos() {
         return cursoRepository.findAllConRelaciones().stream()
                 .map(curso -> CursoDTO.from(
                         curso,
-                        curso.getAlumnos().stream().map(AlumnoDTO::from).toList()
-                ))
+                        curso.getAlumnos().stream().map(AlumnoDTO::from).toList()))
                 .toList();
     }
 
@@ -183,4 +169,3 @@ public class CursoService {
     }
 
 }
-

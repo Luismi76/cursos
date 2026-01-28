@@ -22,9 +22,11 @@ export async function crearAportacionWiki(cursoId: string, texto: string) {
   });
 }
 
+import { OutputData } from "@editorjs/editorjs";
+
 export async function actualizarWikiCurso(
   cursoId: string,
-  contenido: any // o OutputData si tipas mejor
+  contenido: OutputData
 ) {
   return api.put(`/wiki/${cursoId}`, contenido);
 }

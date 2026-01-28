@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+// import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")

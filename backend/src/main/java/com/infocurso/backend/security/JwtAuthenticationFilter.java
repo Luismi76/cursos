@@ -10,14 +10,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+// import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
+// import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
                     token = cookie.getValue();
-                    System.out.println("🍪 Token encontrado en cookie");
+                    // System.out.println("🍪 Token encontrado en cookie");
                     break;
                 }
             }
@@ -48,18 +48,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 token = authHeader.substring(7);
-                System.out.println("📋 Token encontrado en header Authorization");
+                // System.out.println("📋 Token encontrado en header Authorization");
             }
         }
 
         if (token != null && jwtUtil.esTokenValido(token)) {
             Claims claims = jwtUtil.getAllClaims(token);
             String email = claims.getSubject();
-            String rol = claims.get("rol", String.class);
+            // String rol = claims.get("rol", String.class);
 
             Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
             if (usuario != null) {
-                System.out.println("✅ Usuario autenticado: " + email + " con rol: " + rol);
+                System.out.println("✅ Usuario autenticado: " + email + " Authorities: " + usuario.getAuthorities());
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         usuario,
@@ -72,7 +72,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-        System.out.println(
-                "👉 Usuario autenticado en contexto: " + SecurityContextHolder.getContext().getAuthentication());
+        // System.out.println(
+        // "👉 Usuario autenticado en contexto: " +
+        // SecurityContextHolder.getContext().getAuthentication());
     }
 }

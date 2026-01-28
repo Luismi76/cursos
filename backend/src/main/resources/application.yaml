@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/infocurso}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://192.168.1.38:5432/infocurso}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    password: ${SPRING_DATASOURCE_PASSWORD:@Habita76}
   flyway:
     enabled: true
     baseline-on-migrate: true

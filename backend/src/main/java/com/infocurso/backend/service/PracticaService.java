@@ -9,20 +9,20 @@ import com.infocurso.backend.repository.PracticaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+// import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class PracticaService {
 
     private final PracticaRepository practicaRepository;
-    private final CursoService cursoService;
+    // private final CursoService cursoService;
     private final CursoRepository cursoRepository;
     private final ObjectMapper objectMapper;
-
 
     public Practica crearPractica(UUID cursoId, String titulo, String descripcion, LocalDateTime fechaEntrega) {
         Curso curso = cursoRepository.findById(cursoId)
@@ -37,8 +37,6 @@ public class PracticaService {
 
         return practicaRepository.save(practica);
     }
-
-
 
     public List<Practica> listarPorCurso(UUID cursoId) {
         return practicaRepository.findByCursoId(cursoId);

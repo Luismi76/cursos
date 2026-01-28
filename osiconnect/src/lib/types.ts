@@ -58,7 +58,7 @@ export interface Perfil {
   id: number;
   nombre: string;
   email: string;
-  rol: "ALUMNO" | "PROFESOR";
+  rol: "ALUMNO" | "PROFESOR" | "ADMINISTRADOR";
   avatarUrl?: string;
 }
 

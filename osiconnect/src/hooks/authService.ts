@@ -1,7 +1,8 @@
-import { api, login as rawLogin } from '@/services/api';
+import { api } from '@/services/api';
 
 export const login = async (email: string, password: string) => {
-  const data = await rawLogin(email, password);
+  const response = await api.post('/auth/login', { email, password });
+  const data = response.data;
   // Guardar el token si lo recibes
   if (data?.token) {
     localStorage.setItem('token', data.token);

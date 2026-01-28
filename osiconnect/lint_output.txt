@@ -1,0 +1,230 @@
+
+> osiconnect@0.1.0 lint
+> next lint
+
+
+./src/app/admin/curso/[cursoId]/page.tsx
+34:10  Error: 'Dialog' is defined but never used.  @typescript-eslint/no-unused-vars
+34:18  Error: 'DialogTrigger' is defined but never used.  @typescript-eslint/no-unused-vars
+34:33  Error: 'DialogContent' is defined but never used.  @typescript-eslint/no-unused-vars
+48:10  Error: 'modulo' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+48:18  Error: 'setModulo' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+295:27  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/admin/page.tsx
+30:5  Error: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+66:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/admin/usuarios/page.tsx
+87:13  Error: 'result' is never reassigned. Use 'const' instead.  prefer-const
+
+./src/app/alumno/curso/[cursoId]/practica/[practicaId]/page.tsx
+28:11  Error: 'cursoId' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+72:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/alumno/page.tsx
+26:5  Error: 'FileText' is defined but never used.  @typescript-eslint/no-unused-vars
+45:12  Error: 'cursos' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+47:12  Error: 'pendientes' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+126:11  Error: 'getAsistenciaColor' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/curso/[cursoId]/alumnos/page.tsx
+7:10  Error: 'getAlumnosCurso' is defined but never used.  @typescript-eslint/no-unused-vars
+30:5  Error: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+65:8  Warning: React Hook useEffect has a missing dependency: 'cargarDatos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+86:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+104:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+115:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/curso/[cursoId]/asistencia/page.tsx
+68:8  Warning: React Hook useEffect has missing dependencies: 'cargarDatosAlumno' and 'cargarDatosProfesor'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+74:8  Warning: React Hook useEffect has missing dependencies: 'cargarAsistenciaDelDia' and 'esProfesor'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/curso/[cursoId]/examenes/page.tsx
+88:12  Error: 'notasExamen' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+93:8  Warning: React Hook useEffect has a missing dependency: 'cargarDatos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+630:55  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+630:80  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/app/curso/[cursoId]/practicas/page.tsx
+19:5  Error: 'verMiEntrega' is defined but never used.  @typescript-eslint/no-unused-vars
+87:8  Warning: React Hook useEffect has a missing dependency: 'cargarDatos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+120:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+132:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+143:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+154:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+185:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+216:18  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+237:11  Error: 'getEstadoBadge' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/curso/[cursoId]/temario/page.tsx
+27:8  Warning: React Hook useEffect has a missing dependency: 'cargarCurso'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/curso/[cursoId]/wiki/page.tsx
+36:46  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/login/page.tsx
+45:14  Error: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/perfil/page.tsx
+78:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/profesor/curso/[cursoId]/page.tsx
+16:10  Error: 'Practica' is defined but never used.  @typescript-eslint/no-unused-vars
+39:7  Error: 'schema' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+58:10  Error: 'loadingForm' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+101:14  Error: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+179:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/profesor/curso/[cursoId]/practicas/page.tsx
+8:3  Error: 'eliminarPracticaCurso' is defined but never used.  @typescript-eslint/no-unused-vars
+9:3  Error: 'editarPracticaCurso' is defined but never used.  @typescript-eslint/no-unused-vars
+14:8  Error: 'Link' is defined but never used.  @typescript-eslint/no-unused-vars
+15:10  Error: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+30:22  Error: 'loading' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+30:31  Error: 'error' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+32:22  Error: 'setEditandoId' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+33:10  Error: 'loadingForm' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+35:9  Error: 'practicaEditando' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/profesor/practica/[practicaId]/entregas/page.tsx
+19:3  Error: 'Alumno' is defined but never used.  @typescript-eslint/no-unused-vars
+57:6  Warning: React Hook useEffect has a missing dependency: 'cargarEntregas'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/wiki/page.tsx
+20:8  Warning: React Hook useEffect has a missing dependency: 'cargarCursos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/alumnos/NotificacionesAlumno.tsx
+7:10  Error: 'Badge' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/alumnos/TarjetaAlumno.tsx
+15:33  Error: 'id' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/common/AvatarCustomizer.tsx
+62:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/common/AvatarSelector.tsx
+2:10  Error: 'Input' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/common/CalendarioCurso.tsx
+78:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+85:6  Warning: React Hook useEffect has a missing dependency: 'fetchCurso'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+131:15  Error: 'actual' is never reassigned. Use 'const' instead.  prefer-const
+
+./src/components/common/EditorWiki.tsx
+16:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+20:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:20  Error: Component definition is missing display name  react/display-name
+
+./src/components/common/GantSecuenciacion.tsx
+6:10  Error: 'format' is defined but never used.  @typescript-eslint/no-unused-vars
+8:10  Error: 'CalendarIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+9:10  Error: 'Gantt' is defined but never used.  @typescript-eslint/no-unused-vars
+9:17  Error: 'Task' is defined but never used.  @typescript-eslint/no-unused-vars
+9:23  Error: 'ViewMode' is defined but never used.  @typescript-eslint/no-unused-vars
+25:3  Error: 'cursoId' is defined but never used.  @typescript-eslint/no-unused-vars
+27:3  Error: 'onUpdateModulo' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Error: 'onUpdateUnidad' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/common/GanttDHTMLX.tsx
+6:10  Error: 'EventoCursoDTO' is defined but never used.  @typescript-eslint/no-unused-vars
+67:19  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+138:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+147:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+172:6  Warning: React Hook useEffect has missing dependencies: 'esSoloLectura', 'onTaskDblClick', 'onUpdateModulo', and 'onUpdateUnidad'. Either include them or remove the dependency array. If 'onTaskDblClick' changes too often, find the parent component that defines it and wrap that definition in useCallback.  react-hooks/exhaustive-deps
+
+./src/components/common/Leyenda.tsx
+14:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+60:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/common/NotificacionesGlobales.tsx
+15:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+30:22  Error: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/common/SecuenciadorCurso.tsx
+47:6  Warning: React Hook useEffect has a missing dependency: 'fetchCurso'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+140:27  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/common/UnifiedChat.tsx
+34:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/common/VistaPractica.tsx
+44:6  Warning: React Hook useEffect has a missing dependency: 'json'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/layout/AppSidebar.tsx
+7:10  Error: 'Sheet' is defined but never used.  @typescript-eslint/no-unused-vars
+7:17  Error: 'SheetContent' is defined but never used.  @typescript-eslint/no-unused-vars
+7:31  Error: 'SheetTrigger' is defined but never used.  @typescript-eslint/no-unused-vars
+12:5  Error: 'Menu' is defined but never used.  @typescript-eslint/no-unused-vars
+22:11  Error: An interface declaring no members is equivalent to its supertype.  @typescript-eslint/no-empty-object-type
+28:12  Error: 'open' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/layout/ClientLayout.tsx
+27:9  Error: 'rol' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/layout/MobileBottomNav.tsx
+9:5  Error: 'MessageCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+12:5  Error: 'Bell' is defined but never used.  @typescript-eslint/no-unused-vars
+14:10  Error: 'useAuthStore' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/practicas/EditorPractica.tsx
+15:10  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+16:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+82:6  Warning: React Hook useEffect has a missing dependency: 'onChange'. Either include it or remove the dependency array. If 'onChange' changes too often, find the parent component that defines it and wrap that definition in useCallback.  react-hooks/exhaustive-deps
+
+./src/components/practicas/FormularioCrearPractica.tsx
+23:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+24:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+38:46  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/practicas/ListaPracticasCurso.tsx
+28:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+80:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/practicas/RenderEditorContent.tsx
+6:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+27:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/theme/ThemeToggle.tsx
+15:23  Error: 'theme' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/UserDropdown.tsx
+9:37  Error: 'User' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/hooks/useChatCursoSocket.ts
+6:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useFetchData.ts
+5:66  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+14:16  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+21:6  Warning: React Hook useEffect was passed a dependency list that is not an array literal. This means we can't statically verify whether you've passed the correct dependencies.  react-hooks/exhaustive-deps
+21:6  Warning: React Hook useEffect has a missing dependency: 'fetchFn'. Either include it or remove the dependency array. If 'fetchFn' changes too often, find the parent component that defines it and wrap that definition in useCallback.  react-hooks/exhaustive-deps
+
+./src/hooks/useNotificationSocket.ts
+6:66  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/usePracticasCurso.ts
+15:14  Error: 'err' is defined but never used.  @typescript-eslint/no-unused-vars
+24:6  Warning: React Hook useEffect has a missing dependency: 'fetchPracticas'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/lib/renderDescripcion.ts
+3:57  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/renderEditor.ts
+4:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+19:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+40:26  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/services/alumnosService.ts
+24:9  Error: 'token' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/types/dhtmlx-gantt.d.ts
+2:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/types/frappe-gantt.d.ts
+2:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/types/sockjs-client.d.ts
+2:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

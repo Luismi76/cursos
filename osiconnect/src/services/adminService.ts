@@ -59,7 +59,7 @@ export const listarCursos = async (): Promise<CursoDTO[]> => {
 
 export const getCursoById = async (cursoId: string): Promise<CursoDTO> => {
   const response = await api.get(`/admin/curso/${cursoId}`); // ✅ CORRECTO
-  console.log("Estos son los módulos de este curso: ", response.data);
+  // console.log("Estos son los módulos de este curso: ", response.data);
   return response.data;
 }
 
