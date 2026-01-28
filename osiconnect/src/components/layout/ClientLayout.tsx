@@ -111,9 +111,7 @@ export default function ClientLayout({
             )}
             <ThemeToggle />
             <NotificacionesGlobales />
-            <div className="hidden md:block">
-              <UserDropdown />
-            </div>
+            <UserDropdown />
           </div>
         </header>
 

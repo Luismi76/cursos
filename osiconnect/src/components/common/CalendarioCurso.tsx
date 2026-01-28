@@ -71,6 +71,7 @@ export default function CalendarioCurso({
   practicas,
 }: Props) {
   const [vista, setVista] = useState<"multiMonth" | "dayGridMonth">("multiMonth");
+  const [vistaManual, setVistaManual] = useState(false);
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const calendarRef = useRef<FullCalendar | null>(null);
   const { curso, fetchCurso } = useCursoAdminStore();
@@ -79,6 +80,20 @@ export default function CalendarioCurso({
   const [dialogAbierto, setDialogAbierto] = useState(false);
   const [nuevoModulo, setNuevoModulo] = useState(false);
   const [domReady, setDomReady] = useState(false);
+
+  // Detect mobile and set appropriate calendar view
+  useEffect(() => {
+    const checkMobile = () => {
+      if (vistaManual) return; // Don't override manual selection
+
+      const isMobile = window.innerWidth < 768; // md breakpoint
+      setVista(isMobile ? "dayGridMonth" : "multiMonth");
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [vistaManual]);
 
   useEffect(() => {
     fetchCurso(cursoId, modo);
@@ -152,21 +167,20 @@ export default function CalendarioCurso({
     ...(curso?.eventos
       ?.filter((e) => !esFinDeSemana(e.fecha))
       .map((evento) => ({
-        title: `${
-          evento.tipo === "EVALUACION"
-            ? "📝"
-            : evento.tipo === "ENTREGA"
+        title: `${evento.tipo === "EVALUACION"
+          ? "📝"
+          : evento.tipo === "ENTREGA"
             ? "📬"
             : "🎤"
-        } ${evento.titulo}`,
+          } ${evento.titulo}`,
         start: evento.fecha,
         allDay: true,
         color:
           evento.tipo === "EVALUACION"
             ? "#f59e0b"
             : evento.tipo === "ENTREGA"
-            ? "#ef4444"
-            : "#8b5cf6",
+              ? "#ef4444"
+              : "#8b5cf6",
         textColor: "white",
       })) ?? []),
     ...(practicas
@@ -210,9 +224,10 @@ export default function CalendarioCurso({
         <Button
           variant="outline"
           size="sm"
-          onClick={() =>
-            setVista((v) => (v === "dayGridMonth" ? "multiMonth" : "dayGridMonth"))
-          }
+          onClick={() => {
+            setVistaManual(true); // Mark as manual change
+            setVista((v) => (v === "dayGridMonth" ? "multiMonth" : "dayGridMonth"));
+          }}
         >
           <LayoutGrid className="w-4 h-4 mr-1" />
           {vista === "dayGridMonth" ? "Vista anual" : "Vista mensual"}
@@ -235,7 +250,7 @@ export default function CalendarioCurso({
       </div>
 
       <Card className="p-4">
-       {domReady && curso?.modulos && curso.modulos.length > 0 && (
+        {domReady && curso?.modulos && curso.modulos.length > 0 && (
           <FullCalendar
             ref={calendarRef}
             plugins={[multiMonthPlugin, dayGridPlugin, interactionPlugin]}
